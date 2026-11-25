@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ruta WhatsApp API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;
+--bg:light-dark(#fbfbf2,#0d1c24);--sea:light-dark(#bfe3ee,#123341);--ink:light-dark(#13242e,#e7efe9);
+--mute:light-dark(#4d5c63,#9fb2b8);--line:light-dark(#d9d6c4,#24414e);--brown:light-dark(#a8551b,#e0965d);
+--route:light-dark(#d6127e,#ff5fb0);--card:light-dark(#ffffff,#112631);--chip:light-dark(#eef6f8,#17394a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Overpass,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.band{background:var(--sea);position:relative;overflow:hidden;padding-bottom:24px}
+header svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+header .wrap{position:relative}
+h1{font-weight:800;font-size:clamp(30px,4.4vw,48px);line-height:1.05;margin:0 0 8px;text-wrap:balance}
+h2{font-weight:800;font-size:clamp(22px,2.6vw,30px);line-height:1.1;margin:0 0 14px}
+h3{font-size:17px;margin:18px 0 6px}
+.lead{max-width:68ch;margin:0;font-size:17px}
+.meta{font-size:13px;color:var(--mute);margin-top:10px}
+.tool{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;margin-top:-4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+label{font-weight:600;display:block;margin-bottom:6px}
+textarea,input[type=text]{width:100%;font:16px/1.4 inherit;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px}
+textarea{min-height:120px;resize:vertical}
+:focus-visible{outline:3px solid var(--route);outline-offset:2px}
+button{font:600 15px/1 inherit;font-family:inherit;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+button.main{background:var(--route);border-color:var(--route);color:#fff}
+.cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cats button{font-weight:400;text-align:left;line-height:1.2;padding:8px 12px}
+.cats button[aria-pressed=true]{border-color:var(--route);box-shadow:inset 0 0 0 1px var(--route)}
+.cats button .s{color:var(--route);font-weight:800;margin-inline-start:6px}
+.hint{font-size:13px;color:var(--mute);margin:8px 0 0}
+.langbtn{float:right;margin:0 0 12px 12px;background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.empty{color:var(--mute);border:2px dashed var(--line);border-radius:12px;padding:28px;text-align:center}
+.route-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--brown);padding-bottom:8px;margin-bottom:6px}
+.route-h h2{margin:0}
+.what{margin:6px 0 0}
+.ask{background:var(--chip);border-radius:10px;padding:10px 14px;margin-top:12px}
+.tabs{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.reply{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-inline-start:4px solid var(--route);border-radius:10px;padding:14px;font-size:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.links{list-style:none;padding:0;margin:0}
+.links li{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px dotted var(--line);padding:6px 0}
+.links a{color:var(--ink);text-decoration-color:var(--route);text-underline-offset:3px;overflow-wrap:anywhere}
+.links button{min-height:36px;font-size:13px;flex:none}
+.avoid{border-inline-start:4px solid var(--brown);padding:6px 12px;margin-top:14px;color:var(--ink)}
+.toast{font-size:13px;color:var(--route);font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.steps div{border-top:3px solid var(--brown);padding-top:10px}
+.steps b{display:block;font-size:17px;margin-bottom:4px}
+.bars{display:grid;gap:6px;margin:12px 0}
+.bar{display:grid;grid-template-columns:minmax(0,14em) minmax(0,1fr) 3em;gap:10px;align-items:center;font-size:14px}
+.bar i{display:block;height:14px;background:var(--route);border-radius:4px}
+.bar span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap;font-weight:800;color:var(--brown)}
+footer{font-size:13px;color:var(--mute)}
+@media(max-width:860px){.tool{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.steps{grid-template-columns:minmax(0,1fr)}.bar{grid-template-columns:minmax(0,9em) minmax(0,1fr) 2.5em}
+table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600;color:var(--mute)}.stack td:empty{display:none}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="band">
+<svg viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">
+<g fill="none" stroke="#a8551b" stroke-width="1.2">
+<path d="M-20 200 C 200 150, 380 240, 620 180 S 1000 120, 1240 170"/>
+<path d="M-20 225 C 220 180, 400 262, 640 205 S 1010 150, 1240 196"/>
+<path d="M-20 175 C 180 120, 360 215, 600 155 S 990 95, 1240 145" opacity=".6"/>
+</g>
+<path d="M760 60 C 860 40, 940 110, 1040 70 S 1150 30, 1200 50" fill="none" stroke="#d6127e" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+<circle cx="1040" cy="70" r="7" fill="#d6127e"/>
+</svg>
+<div class="wrap">
+<button type="button" id="uilang" class="langbtn">Ver em português</button>
+<h1 data-i="h1">Ruta WhatsApp API: orientar bien, sin adivinar</h1>
+<p class="lead" data-i="lead1">Pega lo que escribió el cliente. La herramienta identifica el tema, te explica qué es en palabras simples y te da una respuesta lista, con el enlace oficial de Meta exacto, para copiar.</p>
+<p class="meta" data-i="meta1">Enlaces oficiales revisados el 24 nov 2026. Meta cambia su documentación: si un enlace falla, usa la portada de la documentación.</p>
+</div>
+</header>
+
+<section class="band">
+<div class="wrap tool">
+<div class="panel">
+<label for="msg" data-i="lmsg">Mensaje del cliente</label>
+<textarea id="msg" data-p="msg" placeholder="Ej.: mi plantilla fue rechazada y no sé por qué / meu número foi bloqueado na API / error 131047"></textarea>
+<p class="hint" data-i="hint1">Funciona en español, portugués e inglés. Si el mensaje trae un número de error, también lo detecta.</p>
+<h3 data-i="hsug">Temas sugeridos</h3>
+<div class="cats" id="sug"><span class="hint">Escribe o pega un mensaje para ver sugerencias.</span></div>
+<h3 data-i="hall">Todos los temas</h3>
+<div class="cats" id="all"></div>
+</div>
+<div class="panel" id="route" aria-live="polite">
+<div class="empty" data-i="empty1">Elige un tema o pega un mensaje.<br>Aquí aparecerá la ruta: qué es, qué preguntar, la respuesta y los enlaces.</div>
+</div>
+</div>
+</section>
+
+<section class="band" style="background:var(--chip)">
+<div class="wrap">
+<h2 data-i="h2a">Fórmula para no recibir calificaciones negativas</h2>
+<p class="lead" style="margin-bottom:18px" data-i="leada">El cliente califica mal cuando siente que lo despacharon. Las respuestas de la herramienta ya siguen este orden. Respétalo si las editas.</p>
+<div class="steps">
+<div data-i="s1"><b>1. Nombra su problema</b>Repite en una frase lo que le pasa. Así sabe que lo entendiste.</div>
+<div data-i="s2"><b>2. Da la ruta, no el "no"</b>Abre con el camino exacto y el enlace. Lo de "este canal no gestiona…" va después, en una línea.</div>
+<div data-i="s3"><b>3. Dile qué tener a mano</b>ID de la cuenta, número, código de error, captura. Así su próximo intento es más corto.</div>
+<div data-i="s4"><b>4. Cierra con algo útil</b>Ofrece aclarar dudas sobre la guía o el producto que sí atiendes. Nunca cierres sin decir cuál es el siguiente paso.</div>
+</div>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap">
+<h2 data-i="h2b">Registro de casos fuera de alcance</h2>
+<p class="lead" data-i="leadb">Cada vez que pulsas "Registrar este caso" se guarda aquí, solo en este navegador. Copia el CSV, pégalo en Excel y llévalo a tu supervisor: con volumen y temas en la mano se puede pedir que corrijan el enrutamiento.</p>
+<div class="bars" id="bars"></div>
+<div class="row">
+<button id="csv" data-i="csv">Copiar CSV</button>
+<button id="clr">Borrar registro</button>
+<span class="toast" id="logmsg"></span>
+</div>
+</div>
+</section>
+
+<section class="band" style="background:var(--chip)">
+<div class="wrap">
+<h2 data-i="h2c">Todos los códigos de error de Cloud API, en palabras simples</h2>
+<p class="lead" data-i="leadc">Lista completa de la tabla oficial de Meta (revisada el 24 nov 2026), traducida a lenguaje simple. La columna de la comunidad recoge soluciones que reportan desarrolladores y proveedores: no son oficiales. Al usarlas con un cliente, preséntalas como "otros usuarios reportan que…", nunca como solución garantizada.</p>
+<div class="row" style="margin:14px 0 12px"><label for="code" style="margin:0" data-i="lcode">Buscar código o palabra</label><input type="text" id="code" data-p="code" style="max-width:240px" placeholder="131047 o pago"><span class="hint" id="ccount" style="margin:0"></span></div>
+<table class="stack" id="codes"><thead><tr><th data-i="th1">Código</th><th data-i="th2">Qué significa</th><th data-i="th3">Solución oficial</th><th data-i="th4">Lo que reporta la comunidad</th><th data-i="th5">Guía</th></tr></thead><tbody></tbody></table>
+<p class="hint" data-i="hintc">Si un código no aparece aquí, Meta pudo haberlo agregado después de la revisión; búscalo en la tabla oficial. No incluye los códigos de la API de llamadas. Tabla oficial: <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/support/error-codes">Códigos de error de WhatsApp</a>.</p>
+</div>
+</section>
+
+<footer class="band"><div class="wrap" data-i="foot">Esta herramienta solo orienta hacia recursos públicos de Meta. No diagnostica cuentas ni reemplaza el soporte oficial de la plataforma. Antes de usarla con clientes, valida con tu supervisor que compartir estos enlaces está dentro de la política de tu operación.</div></footer>
+
+<script src="datos.js"></script>
+<script src="codigos.js"></script>
+<script src="pt.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
