@@ -32,7 +32,7 @@ textarea,input[type=text]{width:100%;font:16px/1.4 inherit;font-family:inherit;c
 textarea{min-height:120px;resize:vertical}
 :focus-visible{outline:3px solid var(--route);outline-offset:2px}
 button{font:600 15px/1 inherit;font-family:inherit;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
-button.main{background:var(--route);border-color:var(--route);color:#fff}
+button.main{background:var(--route);border-color:var(--route);color:var(--bg)}
 .cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .cats button{font-weight:400;text-align:left;line-height:1.2;padding:8px 12px}
 .cats button[aria-pressed=true]{border-color:var(--route);box-shadow:inset 0 0 0 1px var(--route)}
@@ -46,7 +46,7 @@ button.main{background:var(--route);border-color:var(--route);color:#fff}
 .ask{background:var(--chip);border-radius:10px;padding:10px 14px;margin-top:12px}
 .tabs{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
 .tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.reply{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-inline-start:4px solid var(--route);border-radius:10px;padding:14px;font-size:16px}
+.reply{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-inline-start:4px solid var(--route);border-radius:10px;padding:14px;font-size:16px}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .links{list-style:none;padding:0;margin:0}
 .links li{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px dotted var(--line);padding:6px 0}
@@ -116,7 +116,7 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 <section class="band" id="notesec" style="padding-top:0">
 <div class="wrap panel">
 <h2 data-i="h2n">Nota interna para QA</h2>
-<p class="hint" data-i="hintn">Todos los campos son obligatorios. Los enlaces se marcan solos cuando copias la respuesta o un enlace. No se guarda nada: se borra al recargar la página.</p>
+<p class="hint" data-i="hintn">Todos los campos son obligatorios. Los enlaces se marcan solos cuando copias la respuesta o un enlace. Al copiar la nota se registra el caso y todo queda limpio para el siguiente cliente. Los IDs no se guardan.</p>
 <div class="ngrid">
 <div><label for="nat" data-i="lnat">Tipo de activo consultado</label><select id="nat"><option value="" data-i="o0">Elige…</option><option value="waba" data-i="a1">ID de la cuenta de WhatsApp Business (WABA)</option><option value="pn" data-i="a2">ID del número de teléfono</option><option value="tel" data-i="a3">Número de teléfono</option><option value="bm" data-i="a4">ID del portfolio comercial (Business Manager)</option><option value="app" data-i="a5">ID de la app</option><option value="oth" data-i="a6">Otro activo</option></select></div>
 <div><label for="nai" data-i="lnai">ID del activo</label><input type="text" id="nai" autocomplete="off"></div>
@@ -129,7 +129,7 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 <textarea id="nwhy" style="min-height:80px"></textarea>
 <h3 data-i="hnp">Vista previa de la nota</h3>
 <div class="reply" id="nprev"></div>
-<div class="row"><button type="button" class="main" id="ncp" data-i="ncp">Copiar nota</button><button type="button" id="nclr" data-i="nclr">Limpiar nota</button><span class="toast" id="nmsg" role="status"></span></div>
+<div class="row"><button type="button" class="main" id="ncp" data-i="ncp">Copiar nota y registrar</button><button type="button" id="nclr" data-i="nclr">Limpiar nota</button><span class="toast" id="nmsg" role="status"></span></div>
 </div>
 </section>
 <section class="band" style="background:var(--chip)">
@@ -148,7 +148,7 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 <section class="band">
 <div class="wrap">
 <h2 data-i="h2b">Registro de casos fuera de alcance</h2>
-<p class="lead" data-i="leadb">Cada vez que pulsas "Registrar este caso" se guarda aquí, solo en este navegador. Copia el CSV, pégalo en Excel y llévalo a tu supervisor: con volumen y temas en la mano se puede pedir que corrijan el enrutamiento.</p>
+<p class="lead" data-i="leadb">Cada vez que copias una nota interna, el caso se guarda aquí, solo en este navegador. Copia el CSV, pégalo en Excel y llévalo a tu supervisor: con volumen y temas en la mano se puede pedir que corrijan el enrutamiento.</p>
 <div class="bars" id="bars"></div>
 <div class="row">
 <button id="csv" data-i="csv">Copiar CSV</button>

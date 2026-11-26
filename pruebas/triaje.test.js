@@ -95,6 +95,9 @@ const CASOS=[
 ['token invalido al enviar mensajes',['tecnico']],
 ['cual es el precio por conversacion en mexico',['precios']],
 ['necesito factura de los pagos a meta',['facturacion']],
+['no puedo enviar mensajes',['errores']],
+['no me llegan los mensajes',['errores']],
+['nao chegam as mensagens para os clientes',['errores']],
 ['hola buenas tardes',[]],
 ['gracias por la ayuda',[]],
 ];

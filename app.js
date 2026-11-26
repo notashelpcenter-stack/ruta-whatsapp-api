@@ -1,7 +1,9 @@
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
-let cur=null,autoCur=false,ui='es',lang='es';
-try{ui=localStorage.getItem('waRuta.ui')||'es';lang=localStorage.getItem('waRuta.lang')||ui}catch(e){}
+let cur=null,autoCur=false,autoCode=false,ui='es';
+try{ui=localStorage.getItem('waRuta.ui')||'es'}catch(e){}
+// El idioma de respuesta ya no se guarda: se heredaba del cliente anterior (auditoría 25 nov 2026).
+let lang=ui;
 const tr=k=>T[ui][k];
 const F=(c,f)=>ui==='pt'&&CPT[c.id]?CPT[c.id][f]:c[f];
 const lab=k=>ui==='pt'&&LPT[k]?LPT[k]:L[k][0];
@@ -11,19 +13,33 @@ const ES={},ESP={};
 document.querySelectorAll('[data-i]').forEach(el=>ES[el.dataset.i]=el.innerHTML);
 document.querySelectorAll('[data-p]').forEach(el=>ESP[el.dataset.p]=el.placeholder);
 function fill(txt){return txt.replace(/\{(\w+)\}/g,(m,k)=>L[k]?L[k][1]:m)}
-function copy(text,el,ok){
-  const done=()=>{el.textContent=ok||tr('copied');setTimeout(()=>{el.textContent=''},1800)};
+function copy(text,el,ok,then){
+  const done=()=>{if(then)then();el.textContent=ok||tr('copied');setTimeout(()=>{el.textContent=''},1800)};
   try{navigator.clipboard.writeText(text).then(done,()=>{el.textContent=tr('nocopy')})}catch(e){el.textContent=tr('nocopy')}
 }
 function catBtn(c,score){return `<button type="button" data-c="${c.id}" aria-pressed="${cur===c.id}">${esc(F(c,'t'))}${score?`<span class="s">${score}</span>`:''}</button>`}
 function renderAll(){$('all').innerHTML=C.map(c=>catBtn(c)).join('')}
 function suggest(){
-  if(!$('msg').value.trim()){$('sug').innerHTML=`<span class="hint">${tr('sugE')}</span>`;return}
-  const {codes,sc}=rank($('msg').value);
-  if(codes.length){$('code').value=codes[0];renderCodes()}
-  $('sug').innerHTML=sc.length?sc.map(x=>catBtn(x.c,x.s>=4?'●●':'●')).join(''):`<span class="hint">${tr('sugN')}</span>`;
+  const m=$('msg').value.trim(),{codes,sc}=m?rank(m):{codes:[],sc:[]};
+  if(codes.length){$('code').value=codes[0];autoCode=true;renderCodes()}
+  else if(autoCode){$('code').value='';autoCode=false;renderCodes()}
+  $('sug').innerHTML=!m?`<span class="hint">${tr('sugE')}</span>`:sc.length?sc.map(x=>catBtn(x.c,x.s>=4?'●●':'●')).join(''):`<span class="hint">${tr('sugN')}</span>`;
   // Abre solo si hay un ganador claro: con empate abrir el primero mostraba una respuesta equivocada (25 nov 2026).
-  if(sc.length&&(!cur||autoCur)&&!(sc[1]&&sc[1].s===sc[0].s)){show(sc[0].c.id);autoCur=true}
+  const tie=sc[1]&&sc[1].s===sc[0].s;
+  if(sc.length&&!tie&&(!cur||autoCur)){show(sc[0].c.id);autoCur=true}
+  // Si la ruta la abrió el triaje y el mensaje nuevo no tiene ganador, se vacía: antes quedaba la del cliente anterior.
+  else if(autoCur)emptyRoute(tie?tr('tie').replace('{a}',F(sc[0].c,'t')).replace('{b}',F(sc[1].c,'t')):'');
+}
+function emptyRoute(msg){
+  cur=null;
+  $('route').innerHTML=msg?`<div class="empty">${esc(msg)}</div>`:`<div class="empty" data-i="empty1">${ui==='pt'?ST.empty1:ES.empty1}</div>`;
+  document.querySelectorAll('.cats button').forEach(b=>b.setAttribute('aria-pressed',false));
+  renderNote();
+}
+// Cierre del caso: un solo botón valida, copia, registra una vez y deja todo limpio (pedido de TR, 25 nov 2026).
+function newCase(){
+  $('msg').value='';clearNote();autoCur=false;lang=ui;emptyRoute('');
+  $('code').value='';autoCode=false;renderCodes();suggest();$('msg').focus();
 }
 function show(id){
   const c=C.find(x=>x.id===id);if(!c)return;cur=id;
@@ -33,7 +49,7 @@ function show(id){
 <div class="ask"><b>${tr('ask')}</b> ${esc(F(c,'ask'))}</div>
 <div class="tabs" role="tablist" aria-label="${tr('rl')}">${Object.keys(LN).map(l=>`<button type="button" role="tab" data-l="${l}" aria-selected="${l===lang}">${LN[l]}</button>`).join('')}</div>
 <div class="reply" id="reply">${esc(reply)}</div>
-<div class="row"><button type="button" class="main" id="cp">${tr('cp')}</button><button type="button" id="lg">${tr('lg')}</button><span class="toast" id="t1"></span></div>
+<div class="row"><button type="button" class="main" id="cp">${tr('cp')}</button><span class="toast" id="t1"></span></div>
 <h3>${tr('links')}</h3>
 <ul class="links">${c.links.map(k=>`<li><a href="${esc(L[k][1])}" target="_blank" rel="noopener">${esc(lab(k))}</a><button type="button" data-k="${k}" data-u="${esc(L[k][1])}">${tr('cl')}</button></li>`).join('')}</ul>
 <div class="avoid"><b>${tr('avoid')}</b> ${esc(F(c,'avoid'))}</div>`;
@@ -64,8 +80,12 @@ function copyNote(){
   NREQ.forEach(id=>$(id).setAttribute('aria-invalid',miss.includes(id)));
   const names=miss.map(id=>document.querySelector(`label[for=${id}]`).textContent);
   if(!usedL.size)names.push(tr('nlk'));
+  if(!cur)names.unshift(tr('ntopic'));
   if(names.length){$('nmsg').textContent=tr('nmiss')+' '+names.join(', ');if(miss.length)$(miss[0]).focus();return}
-  copy(noteText(),$('nmsg'),tr('nok'));
+  const b=$('ncp');if(b.disabled)return;
+  b.disabled=true;setTimeout(()=>{b.disabled=false},800); // evita registrar dos veces con doble clic
+  // registrar y limpiar solo si la copia funcionó: si falla, la nota sigue en pantalla
+  copy(noteText(),$('nmsg'),tr('nok'),()=>{addLog(cur);newCase()});
 }
 function clearNote(){
   ['nat','nai','nrol','nui'].forEach(id=>{$(id).value='';$(id).removeAttribute('aria-invalid')});
@@ -87,18 +107,17 @@ function applyUI(){
   $('uilang').textContent=tr('btn');
   const cb=$('clr');delete cb.dataset.sure;cb.textContent=tr('clr');
   renderAll();suggest();renderLog();renderCodes();renderNote();
-  if(cur)show(cur);else if(!$('route').querySelector('[data-i]'))$('route').innerHTML=`<div class="empty" data-i="empty1">${ui==='pt'?ST.empty1:ES.empty1}</div>`;
+  if(cur)show(cur);else if(!$('route').querySelector('.empty'))$('route').innerHTML=`<div class="empty" data-i="empty1">${ui==='pt'?ST.empty1:ES.empty1}</div>`;
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.id==='uilang'){ui=ui==='pt'?'es':'pt';lang=ui;try{localStorage.setItem('waRuta.ui',ui);localStorage.setItem('waRuta.lang',lang)}catch(x){}applyUI();return}
+  if(b.id==='uilang'){ui=ui==='pt'?'es':'pt';lang=ui;try{localStorage.setItem('waRuta.ui',ui)}catch(x){}applyUI();return}
   if(b.dataset.c){show(b.dataset.c);autoCur=false;if(innerWidth<860)$('route').scrollIntoView({behavior:'smooth',block:'start'});return}
-  if(b.dataset.l){lang=b.dataset.l;try{localStorage.setItem('waRuta.lang',lang)}catch(x){}show(cur);return}
+  if(b.dataset.l){lang=b.dataset.l;show(cur);return}
   if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));usedL.add(b.dataset.k);renderNote();return}
   if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));for(const m of C.find(x=>x.id===cur).r[lang].matchAll(/\{(\w+)\}/g))if(L[m[1]])usedL.add(m[1]);renderNote();return}
   if(b.id==='ncp'){copyNote();return}
   if(b.id==='nclr'){clearNote();return}
-  if(b.id==='lg'){addLog(cur);$('t1').textContent=tr('logged');setTimeout(()=>{$('t1').textContent=''},1800);return}
   if(b.id==='csv'){const rows=[tr('csvh')].concat(getLog().map(r=>{const d=new Date(r.t),c=C.find(x=>x.id===r.c);return[d.toLocaleDateString(tr('loc')),d.toLocaleTimeString(tr('loc'),{hour:'2-digit',minute:'2-digit'}),c?F(c,'t'):r.c]}));copy(rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'),$('logmsg'),tr('csvok'));return}
   if(b.id==='clr'){if(b.dataset.sure){setLog([]);delete b.dataset.sure;b.textContent=tr('clr');renderLog()}else{b.dataset.sure='1';b.textContent=tr('sure');setTimeout(()=>{delete b.dataset.sure;b.textContent=tr('clr')},4000)}}
 });
