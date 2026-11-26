@@ -106,6 +106,12 @@ const CASOS=[
 ['los mensajes llegan al webhook sin el numero de telefono del cliente',['tecnico']],
 ['meta cambio mi plantilla de utilidad a marketing',['plantillas']],
 ['my utility template was recategorized as marketing',['plantillas']],
+// Mover el número a otro Business Manager (tema portafolio, 26 nov 2026)
+['quiero desvincular mi numero de un business manager para pasarlo a otro business manager',['portafolio']],
+['como muevo el numero de whatsapp a otro portafolio',['portafolio']],
+['preciso mover o numero para outro business manager',['portafolio']],
+['how do I move my whatsapp number to another business manager',['portafolio']],
+['vendimos la empresa y el numero tiene que pasar al bm del comprador',['portafolio']],
 // Acceso de admin: sin contenido verificado desde la auditoría del 25 nov 2026, así que no debe sugerir un tema que no lo resuelve.
 ['perdi el acceso de administrador a mi cuenta de whatsapp, el admin se fue de la empresa',[]],
 ['perdi o acesso de administrador do portfolio',[]],
