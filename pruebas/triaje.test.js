@@ -106,8 +106,9 @@ const CASOS=[
 ['los mensajes llegan al webhook sin el numero de telefono del cliente',['tecnico']],
 ['meta cambio mi plantilla de utilidad a marketing',['plantillas']],
 ['my utility template was recategorized as marketing',['plantillas']],
-['perdi el acceso de administrador a mi cuenta de whatsapp, el admin se fue de la empresa',['propiedad']],
-['perdi o acesso de administrador do portfolio',['propiedad']],
+// Acceso de admin: sin contenido verificado desde la auditoría del 25 nov 2026, así que no debe sugerir un tema que no lo resuelve.
+['perdi el acceso de administrador a mi cuenta de whatsapp, el admin se fue de la empresa',[]],
+['perdi o acesso de administrador do portfolio',[]],
 ['el marketing no les llega a algunos clientes',['errores']],
 ['hola buenas tardes',[]],
 ['gracias por la ayuda',[]],

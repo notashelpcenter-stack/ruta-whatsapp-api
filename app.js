@@ -56,9 +56,9 @@ function comBlock(id){
   const cm=COM[id];if(!cm)return'';
   return `<section class="com" aria-labelledby="comh"><h3 id="comh">${tr('comH')}</h3>
 <p class="comw"><b>${tr('comW1')}</b> ${tr('comW2')}</p>
-${cm.map(x=>`<details><summary>${esc(x.p[ui])}</summary><ol>${x.s[ui].map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+${cm.map(x=>`<details><summary>${esc(x.p[ui])}</summary><ol>${x.s[ui].map(s=>{const m=s.startsWith('M:');return `<li><span class="${m?'tm':'tc'}">${tr(m?'tm':'tc')}</span> ${esc(m?s.slice(2):s)}</li>`}).join('')}</ol>
 <p class="hint">${tr('comSrc')} · ${tr('comRev')} ${new Date(x.rev+'T12:00').toLocaleDateString(tr('loc'))}</p>
-<ul class="links">${x.src.map(([t,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a><button type="button" data-cu="${esc(u)}" data-ct="${esc(t)}">${tr('cl')}</button></li>`).join('')}</ul></details>`).join('')}</section>`;
+<ul class="links">${x.src.map(([t,u,o])=>`<li><span class="${o?'tm':'tc'}">${tr(o?'tm':'tc')}</span> <a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a><button type="button" data-cu="${esc(u)}" data-ct="${esc((o?'[Meta]':tr('comTag'))+' '+t)}">${tr('cl')}</button></li>`).join('')}</ul></details>`).join('')}</section>`;
 }
 function show(id){
   const c=C.find(x=>x.id===id);if(!c)return;cur=id;
@@ -170,7 +170,7 @@ document.addEventListener('click',e=>{
   if(b.dataset.l){lang=b.dataset.l;show(cur);return}
   if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));usedL.add(b.dataset.k);renderNote();return}
   // Enlace de comunidad: entra a la nota marcado como no oficial, porque QA revisa qué enlaces se dieron.
-  if(b.dataset.cu){copy(b.dataset.cu,$('t1'),tr('lcopied'));manL.set(b.dataset.cu,tr('comTag')+' '+b.dataset.ct);renderNote();return}
+  if(b.dataset.cu){copy(b.dataset.cu,$('t1'),tr('lcopied'));manL.set(b.dataset.cu,b.dataset.ct);renderNote();return}
   if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));for(const m of C.find(x=>x.id===cur).r[lang].matchAll(/\{(\w+)\}/g))if(L[m[1]])usedL.add(m[1]);renderNote();return}
   if(b.id==='nadd'){$('nassets').insertAdjacentHTML('beforeend',assetRow());arows().pop().querySelector('select').focus();return}
   if(b.dataset.rm!==undefined){const r=b.closest('.arow');if(arows().length>1){r.remove();$('nadd').focus()}else renderAssets([['','']]);$('nprev').textContent=noteText();return}

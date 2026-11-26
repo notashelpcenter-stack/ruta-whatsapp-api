@@ -19,7 +19,7 @@ const CODESPT={
 '2388012':['O número já existe nessa conta do WhatsApp.','Usar um número que não esteja na conta.',''],
 '2388091':['O número não está em migração, então esse código de registro não se aplica. (Igual para 2388093.)','Usar o fluxo normal de verificação.',''],
 '2388093':['O número não está em migração, então esse código de registro não se aplica.','Usar o fluxo normal de verificação.',''],
-'2388103':['A migração não é possível. Tem várias variantes: nome de exibição não aprovado, sem conta de pagamento, número de outro portfólio, conta não aprovada, falha genérica, entre outras.','Ler o texto exato do erro. Se for "nome não aprovado", aprovar o nome primeiro; se for falha genérica, tentar mais tarde; em várias variantes não há solução por migração.',''],
+'2388103':['A migração não é possível. Tem várias variantes: nome de exibição não aprovado, sem conta de pagamento, número de outro portfólio, conta não aprovada, falha genérica, entre outras.','Desde o novo modelo de contas (outubro de 2026), a Meta não permite mais migrar números entre provedores: o cliente compartilha a conta do WhatsApp com o novo provedor. Usar o tema "Número em um provedor".',''],
 '2494100':['O número está em manutenção.','Tentar de novo em alguns minutos.',''],
 '200005':['As estatísticas ainda não estão disponíveis para a conta.','Tentar mais tarde.',''],
 '200006':['As estatísticas não podem ser desativadas depois de ativadas.','Nenhuma.',''],

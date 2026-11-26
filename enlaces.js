@@ -36,6 +36,17 @@ lc:['Compartir y revocar líneas de crédito',D+'solution-providers/share-and-re
 migp:['Migrar un número entre proveedores (por API)',D+'solution-providers/support/migrating-phone-numbers-among-solution-partners-programmatically'],
 mige:['Migrar un número entre proveedores (registro integrado)',D+'solution-providers/support/migrating-phone-numbers-among-solution-partners-via-embedded-signup'],
 tsv:['Desactivar la verificación en dos pasos del número',D+'business-phone-numbers/phone-numbers#disabling-two-step-verification'],
-arw:['Aviso de resultado de la revisión de cuenta (para desarrolladores)',D+'webhooks/reference/account_review_update/']
+arw:['Aviso de resultado de la revisión de cuenta (para desarrolladores)',D+'webhooks/reference/account_review_update/'],
+dn:['Nombre visible: rechazo, apelación y cambio',D+'display-names'],
+ese:['Errores del registro integrado y su solución (para proveedores)',D+'embedded-signup/errors'],
+coex:['Usar el número en la app WhatsApp Business y en la API (coexistencia)',D+'embedded-signup/onboarding-business-app-users'],
+pn:['Números de teléfono: agregar, verificar y PIN de dos pasos',D+'business-phone-numbers/phone-numbers'],
+tcat:['Categorías de plantillas y revisión de categoría',D+'templates/template-categorization'],
+tpz:['Plantillas pausadas: duración y cómo reactivarlas',D+'templates/template-pausing'],
+pul:['Límite de marketing por usuario (error 131049)',D+'templates/marketing-templates/per-user-limits'],
+bsuid:['Nombres de usuario e identificador BSUID',D+'business-scoped-user-ids'],
+oba:['Cuenta oficial de empresa (insignia)',D+'official-business-accounts'],
+ame:['Nuevo modelo de cuentas: compartir y mover números',D+'account-model-evolution'],
+st:['Estado de la plataforma (caídas)','https://metastatus.com/whatsapp-business-api']
 };
 const C=[];

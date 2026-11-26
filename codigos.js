@@ -19,7 +19,7 @@ const CODES=[
 ['2388012','Migración de número','El número ya existe en esa cuenta de WhatsApp.','Usar un número que no esté en la cuenta.','','reg'],
 ['2388091','Migración de número','El número no está en migración, así que no aplica ese código de registro. (Igual para 2388093.)','Usar el flujo normal de verificación.','','reg'],
 ['2388093','Migración de número','El número no está en migración, así que no aplica ese código de registro.','Usar el flujo normal de verificación.','','reg'],
-['2388103','Migración de número','La migración no es posible. Tiene varias variantes: nombre visible no aprobado, sin cuenta de pago, número de otro portafolio, cuenta no aprobada, fallo genérico, entre otras.','Leer el texto exacto del error. Si es "nombre no aprobado", aprobar el nombre primero; si es fallo genérico, reintentar más tarde; en varias variantes no hay solución por migración.','','migp'],
+['2388103','Migración de número','La migración no es posible. Tiene varias variantes: nombre visible no aprobado, sin cuenta de pago, número de otro portafolio, cuenta no aprobada, fallo genérico, entre otras.','Desde el nuevo modelo de cuentas (octubre de 2026), Meta ya no permite migrar números entre proveedores: el cliente comparte su cuenta de WhatsApp con el nuevo proveedor. Usar el tema "Número en un proveedor".','','ame'],
 ['2494100','Migración de número','El número está en mantenimiento.','Reintentar en unos minutos.','','err'],
 ['200005','Estadísticas de plantillas','Las estadísticas aún no están disponibles para la cuenta.','Reintentar más tarde.','','err'],
 ['200006','Estadísticas de plantillas','Las estadísticas no se pueden desactivar una vez activadas.','Ninguna.','','err'],
