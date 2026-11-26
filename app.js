@@ -37,10 +37,50 @@ function show(id){
 <div class="reply" id="reply">${esc(reply)}</div>
 <div class="row"><button type="button" class="main" id="cp">${tr('cp')}</button><button type="button" id="lg">${tr('lg')}</button><span class="toast" id="t1"></span></div>
 <h3>${tr('links')}</h3>
-<ul class="links">${c.links.map(k=>`<li><a href="${esc(L[k][1])}" target="_blank" rel="noopener">${esc(lab(k))}</a><button type="button" data-u="${esc(L[k][1])}">${tr('cl')}</button></li>`).join('')}</ul>
+<ul class="links">${c.links.map(k=>`<li><a href="${esc(L[k][1])}" target="_blank" rel="noopener">${esc(lab(k))}</a><button type="button" data-k="${k}" data-u="${esc(L[k][1])}">${tr('cl')}</button></li>`).join('')}</ul>
 <div class="avoid"><b>${tr('avoid')}</b> ${esc(F(c,'avoid'))}</div>`;
   document.querySelectorAll('.cats button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===id));
+  renderNote();
 }
+// Nota interna: los IDs son datos de cuenta del cliente, por eso viven solo en memoria y nunca en localStorage.
+let usedL=new Set(),whyEd=false;
+const NREQ=['nat','nai','nrol','nui','nwhy'];
+function renderNote(){
+  const c=C.find(x=>x.id===cur),keys=[...new Set([...usedL,...(c?c.links:[])])];
+  $('nlinks').innerHTML=keys.length?keys.map(k=>`<label class="chk"><input type="checkbox" data-nk="${k}"${usedL.has(k)?' checked':''}> ${esc(lab(k))}</label>`).join(''):`<p class="hint">${tr('nnol')}</p>`;
+  if(!whyEd)$('nwhy').value=c?tr('nwhyd').replace('{t}',F(c,'t')):'';
+  $('nprev').textContent=noteText();
+}
+function noteText(){
+  const c=C.find(x=>x.id===cur),v=id=>$(id).value.trim(),opt=id=>$(id).value?$(id).selectedOptions[0].text:'';
+  return [tr('nh'),
+    `${tr('nasset')}: ${[opt('nat'),v('nai')].filter(Boolean).join(': ')||'—'}`,
+    `${tr('nrole')}: ${opt('nrol')||'—'}`,
+    `${tr('nuid')}: ${v('nui')||'—'}`,
+    `${tr('ntopic')}: ${c?F(c,'t'):'—'}`,
+    `${tr('nlk')}:`+(usedL.size?'\n'+[...usedL].map(k=>`- ${lab(k)}: ${L[k][1]}`).join('\n'):' —'),
+    `${tr('nwhy')}: ${v('nwhy')||'—'}`].join('\n');
+}
+function copyNote(){
+  const miss=NREQ.filter(id=>!$(id).value.trim());
+  NREQ.forEach(id=>$(id).setAttribute('aria-invalid',miss.includes(id)));
+  const names=miss.map(id=>document.querySelector(`label[for=${id}]`).textContent);
+  if(!usedL.size)names.push(tr('nlk'));
+  if(names.length){$('nmsg').textContent=tr('nmiss')+' '+names.join(', ');if(miss.length)$(miss[0]).focus();return}
+  copy(noteText(),$('nmsg'),tr('nok'));
+}
+function clearNote(){
+  ['nat','nai','nrol','nui'].forEach(id=>{$(id).value='';$(id).removeAttribute('aria-invalid')});
+  usedL.clear();whyEd=false;$('nmsg').textContent='';renderNote();
+}
+function noteInput(e){
+  if(!e.target.closest('#notesec'))return;
+  if(e.target.id==='nwhy')whyEd=true;
+  const k=e.target.dataset.nk;if(k)e.target.checked?usedL.add(k):usedL.delete(k);
+  e.target.removeAttribute('aria-invalid');$('nprev').textContent=noteText();
+}
+document.addEventListener('input',noteInput);
+document.addEventListener('change',noteInput);
 function applyUI(){
   document.documentElement.lang=ui==='pt'?'pt-BR':'es';
   document.title=ui==='pt'?'Rota WhatsApp API':'Ruta WhatsApp API';
@@ -48,7 +88,7 @@ function applyUI(){
   document.querySelectorAll('[data-p]').forEach(el=>{el.placeholder=ui==='pt'?SP[el.dataset.p]:ESP[el.dataset.p]});
   $('uilang').textContent=tr('btn');
   const cb=$('clr');delete cb.dataset.sure;cb.textContent=tr('clr');
-  renderAll();suggest();renderLog();renderCodes();
+  renderAll();suggest();renderLog();renderCodes();renderNote();
   if(cur)show(cur);else if(!$('route').querySelector('[data-i]'))$('route').innerHTML=`<div class="empty" data-i="empty1">${ui==='pt'?ST.empty1:ES.empty1}</div>`;
 }
 document.addEventListener('click',e=>{
@@ -56,8 +96,10 @@ document.addEventListener('click',e=>{
   if(b.id==='uilang'){ui=ui==='pt'?'es':'pt';lang=ui;try{localStorage.setItem('waRuta.ui',ui);localStorage.setItem('waRuta.lang',lang)}catch(x){}applyUI();return}
   if(b.dataset.c){show(b.dataset.c);if(innerWidth<860)$('route').scrollIntoView({behavior:'smooth',block:'start'});return}
   if(b.dataset.l){lang=b.dataset.l;try{localStorage.setItem('waRuta.lang',lang)}catch(x){}show(cur);return}
-  if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));return}
-  if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));return}
+  if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));usedL.add(b.dataset.k);renderNote();return}
+  if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));for(const m of C.find(x=>x.id===cur).r[lang].matchAll(/\{(\w+)\}/g))if(L[m[1]])usedL.add(m[1]);renderNote();return}
+  if(b.id==='ncp'){copyNote();return}
+  if(b.id==='nclr'){clearNote();return}
   if(b.id==='lg'){addLog(cur);$('t1').textContent=tr('logged');setTimeout(()=>{$('t1').textContent=''},1800);return}
   if(b.id==='csv'){const rows=[tr('csvh')].concat(getLog().map(r=>{const d=new Date(r.t),c=C.find(x=>x.id===r.c);return[d.toLocaleDateString(tr('loc')),d.toLocaleTimeString(tr('loc'),{hour:'2-digit',minute:'2-digit'}),c?F(c,'t'):r.c]}));copy(rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'),$('logmsg'),tr('csvok'));return}
   if(b.id==='clr'){if(b.dataset.sure){setLog([]);delete b.dataset.sure;b.textContent=tr('clr');renderLog()}else{b.dataset.sure='1';b.textContent=tr('sure');setTimeout(()=>{delete b.dataset.sure;b.textContent=tr('clr')},4000)}}

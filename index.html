@@ -65,6 +65,12 @@ table{border-collapse:collapse;width:100%;font-size:15px}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 td:first-child{white-space:nowrap;font-weight:800;color:var(--brown)}
 footer{font-size:13px;color:var(--mute)}
+select{width:100%;font-size:16px;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px;min-height:46px}
+.ngrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chk{display:flex;gap:8px;align-items:flex-start;font-weight:400;padding:4px 0;margin:0}
+.chk input{width:20px;height:20px;flex:none;margin-top:2px}
+[aria-invalid=true]{border:2px solid var(--route)!important}
+@media(max-width:600px){.ngrid{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:860px){.tool{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.steps{grid-template-columns:minmax(0,1fr)}.bar{grid-template-columns:minmax(0,9em) minmax(0,1fr) 2.5em}
 table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600;color:var(--mute)}.stack td:empty{display:none}}
@@ -107,6 +113,25 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 </div>
 </section>
 
+<section class="band" id="notesec" style="padding-top:0">
+<div class="wrap panel">
+<h2 data-i="h2n">Nota interna para QA</h2>
+<p class="hint" data-i="hintn">Todos los campos son obligatorios. Los enlaces se marcan solos cuando copias la respuesta o un enlace. No se guarda nada: se borra al recargar la página.</p>
+<div class="ngrid">
+<div><label for="nat" data-i="lnat">Tipo de activo consultado</label><select id="nat"><option value="" data-i="o0">Elige…</option><option value="waba" data-i="a1">ID de la cuenta de WhatsApp Business (WABA)</option><option value="pn" data-i="a2">ID del número de teléfono</option><option value="tel" data-i="a3">Número de teléfono</option><option value="bm" data-i="a4">ID del portfolio comercial (Business Manager)</option><option value="app" data-i="a5">ID de la app</option><option value="oth" data-i="a6">Otro activo</option></select></div>
+<div><label for="nai" data-i="lnai">ID del activo</label><input type="text" id="nai" autocomplete="off"></div>
+<div><label for="nrol" data-i="lnrol">Rol del usuario</label><select id="nrol"><option value="" data-i="o0b">Elige…</option><option value="adm" data-i="r1">Administrador (control total)</option><option value="emp" data-i="r2">Empleado (acceso parcial)</option><option value="dev" data-i="r3">Desarrollador de la app</option><option value="bsp" data-i="r4">Proveedor o partner (BSP)</option><option value="oth" data-i="r5">Otro rol</option></select></div>
+<div><label for="nui" data-i="lnui">ID del usuario</label><input type="text" id="nui" autocomplete="off"></div>
+</div>
+<h3 data-i="hnl">Enlaces utilizados</h3>
+<div id="nlinks"></div>
+<label for="nwhy" style="margin-top:14px" data-i="lnwhy">Por qué se usaron</label>
+<textarea id="nwhy" style="min-height:80px"></textarea>
+<h3 data-i="hnp">Vista previa de la nota</h3>
+<div class="reply" id="nprev"></div>
+<div class="row"><button type="button" class="main" id="ncp" data-i="ncp">Copiar nota</button><button type="button" id="nclr" data-i="nclr">Limpiar nota</button><span class="toast" id="nmsg" role="status"></span></div>
+</div>
+</section>
 <section class="band" style="background:var(--chip)">
 <div class="wrap">
 <h2 data-i="h2a">Fórmula para no recibir calificaciones negativas</h2>
