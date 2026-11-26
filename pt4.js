@@ -38,6 +38,7 @@ Object.assign(CODESPT,{
 '134011':['Falta aceitar os termos de pagamentos do WhatsApp.','Aceitá-los pelo link do erro.',''],
 '135000':['Erro de parâmetro não especificado.','Revisar a sintaxe; se persistir, contatar o suporte.',''],
 '131055':['Foi enviado algo que não é um modelo de marketing.','Usar um modelo de marketing.',''],
+'131066':['A mensagem de marketing não foi entregue a este usuário pela qualidade do modelo ou pelo preço máximo configurado.','Melhorar a qualidade do modelo ou aumentar o preço máximo. Mesmo assim, a entrega não é garantida.',''],
 '134100':['Essa API só aceita modelos de marketing (foi enviado um de utilidade ou autenticação).','Usar só modelos de marketing.',''],
 '134101':['O modelo ainda está sincronizando (pode levar até 10 minutos).','Esperar 10 minutos e tentar de novo.',''],
 '134102':['O modelo não está disponível: a sincronização falhou ou a conta não é elegível.','Revisar a elegibilidade; contatar o suporte se o status for ONBOARDED.',''],

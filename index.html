@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ruta WhatsApp API</title>
+<script>try{const t=localStorage.getItem('waRuta.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap" rel="stylesheet">
@@ -11,68 +12,100 @@
 :root{color-scheme:light dark;
 --bg:light-dark(#fbfbf2,#0d1c24);--sea:light-dark(#bfe3ee,#123341);--ink:light-dark(#13242e,#e7efe9);
 --mute:light-dark(#4d5c63,#9fb2b8);--line:light-dark(#d9d6c4,#24414e);--brown:light-dark(#a8551b,#e0965d);
---route:light-dark(#d6127e,#ff5fb0);--card:light-dark(#ffffff,#112631);--chip:light-dark(#eef6f8,#17394a)}
+--route:light-dark(#d6127e,#ff5fb0);--card:light-dark(#ffffff,#112631);--chip:light-dark(#eef6f8,#17394a);
+--err:light-dark(#b3261e,#ff8a80);--field:light-dark(#7f8a8e,#6a8a98);--link:light-dark(#0b5cad,#8ccaff);--warn:light-dark(#fdf1e4,#2b2418)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:16px}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Overpass,system-ui,sans-serif;overflow-x:clip}
-.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+::selection{background:var(--route);color:var(--bg)}
+::placeholder{color:var(--mute);opacity:1}
+.band{padding:clamp(20px,3vw,40px) max(5vw,16px)}
 .wrap{max-width:1240px;margin:0 auto}
-header.band{background:var(--sea);position:relative;overflow:hidden;padding-bottom:24px}
-header svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
-header .wrap{position:relative}
-h1{font-weight:800;font-size:clamp(30px,4.4vw,48px);line-height:1.05;margin:0 0 8px;text-wrap:balance}
+header.band{background:var(--sea);position:relative;overflow:hidden;padding-block:18px}
+header svg{position:absolute;inset:0;width:100%;height:100%;opacity:.45;pointer-events:none}
+.hrow{position:relative;display:flex;gap:16px 24px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.htxt{flex:1 1 420px}
+.hact{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hact nav{display:flex;gap:4px 14px;flex-wrap:wrap;margin-inline-end:8px}
+.hact nav a{color:var(--ink);font-weight:600;font-size:15px;text-decoration-color:var(--route);text-underline-offset:4px;padding:10px 0}
+h1{font-weight:800;font-size:clamp(24px,3vw,34px);line-height:1.1;margin:0 0 4px;text-wrap:balance}
 h2{font-weight:800;font-size:clamp(22px,2.6vw,30px);line-height:1.1;margin:0 0 14px}
+h2.sub{font-size:17px;font-weight:600;margin:18px 0 6px}
 h3{font-size:17px;margin:18px 0 6px}
-.lead{max-width:68ch;margin:0;font-size:17px}
-.meta{font-size:13px;color:var(--mute);margin-top:10px}
-.tool{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;margin-top:-4px}
+.lead{max-width:68ch;margin:0;font-size:16px}
+.tool{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-areas:"msg route" "note route";grid-template-rows:auto 1fr;gap:20px;align-items:start}
+#pmsg{grid-area:msg}#route{grid-area:route}#notesec{grid-area:note}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
 label{font-weight:600;display:block;margin-bottom:6px}
-textarea,input[type=text]{width:100%;font:16px/1.4 inherit;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px}
-textarea{min-height:120px;resize:vertical}
+textarea,input[type=text],input[type=url],select{width:100%;font:inherit;line-height:1.4;color:var(--ink);background:var(--bg);border:1px solid var(--field);border-radius:10px;padding:11px;min-height:46px}
+textarea{min-height:110px;resize:vertical}
 :focus-visible{outline:3px solid var(--route);outline-offset:2px}
-button{font:600 15px/1 inherit;font-family:inherit;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+button{font:inherit;font-size:15px;font-weight:600;line-height:1;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--ink)}
+button:disabled{opacity:.6;cursor:default}
 button.main{background:var(--route);border-color:var(--route);color:var(--bg)}
+button.main:hover{filter:brightness(1.08)}
 .cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .cats button{font-weight:400;text-align:left;line-height:1.2;padding:8px 12px}
-.cats button[aria-pressed=true]{border-color:var(--route);box-shadow:inset 0 0 0 1px var(--route)}
-.cats button .s{color:var(--route);font-weight:800;margin-inline-start:6px}
+.cats button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cats button .s{color:var(--mute);font-weight:800;margin-inline-start:6px}
+details.all{margin-top:18px}
+details.all summary{font-weight:600;cursor:pointer;padding:10px 0}
 .hint{font-size:13px;color:var(--mute);margin:8px 0 0}
-.langbtn{float:right;margin:0 0 12px 12px;background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .empty{color:var(--mute);border:2px dashed var(--line);border-radius:12px;padding:28px;text-align:center}
-.route-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--brown);padding-bottom:8px;margin-bottom:6px}
+.route-h{border-bottom:2px solid var(--brown);padding-bottom:8px;margin-bottom:6px}
 .route-h h2{margin:0}
 .what{margin:6px 0 0}
 .ask{background:var(--chip);border-radius:10px;padding:10px 14px;margin-top:12px}
-.tabs{display:flex;gap:6px;margin:16px 0 8px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.rbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:16px 0 8px}
 .tabs button[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.reply{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-inline-start:4px solid var(--route);border-radius:10px;padding:14px;font-size:16px}
+.reply{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;font-size:16px}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .links{list-style:none;padding:0;margin:0}
 .links li{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px dotted var(--line);padding:6px 0}
-.links a{color:var(--ink);text-decoration-color:var(--route);text-underline-offset:3px;overflow-wrap:anywhere}
+a{color:var(--link);text-decoration:underline;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+.links a,.calert a{overflow-wrap:anywhere}
+#codes th:last-child{width:11em}
 .links button{min-height:36px;font-size:13px;flex:none}
-.avoid{border-inline-start:4px solid var(--brown);padding:6px 12px;margin-top:14px;color:var(--ink)}
-.toast{font-size:13px;color:var(--route);font-weight:600}
-.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.avoid{background:var(--warn);border-radius:10px;padding:10px 14px;margin-top:14px}
+.toast{font-size:13px;color:var(--ink);font-weight:600}
+.calert{background:var(--warn);border:1px solid var(--brown);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.calert p{margin:0;max-width:110ch}.calert p+p{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.calert b{color:var(--brown)}
+.calert a{font-weight:600;white-space:nowrap}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:14px}
 .steps div{border-top:3px solid var(--brown);padding-top:10px}
 .steps b{display:block;font-size:17px;margin-bottom:4px}
+details.formula summary{cursor:pointer;list-style-position:outside}
+details.formula summary h2{display:inline;margin:0}
 .bars{display:grid;gap:6px;margin:12px 0}
 .bar{display:grid;grid-template-columns:minmax(0,14em) minmax(0,1fr) 3em;gap:10px;align-items:center;font-size:14px}
 .bar i{display:block;height:14px;background:var(--route);border-radius:4px}
 .bar span:last-child{text-align:right;font-variant-numeric:tabular-nums}
-table{border-collapse:collapse;width:100%;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
 th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
 td:first-child{white-space:nowrap;font-weight:800;color:var(--brown)}
 footer{font-size:13px;color:var(--mute)}
-select{width:100%;font-size:16px;font-family:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px;min-height:46px}
-.ngrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.chk{display:flex;gap:8px;align-items:flex-start;font-weight:400;padding:4px 0;margin:0}
+footer p{margin:0 0 6px;max-width:90ch}
+.ngrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px}
+fieldset{border:0;padding:0;margin:0 0 14px}
+legend{font-weight:600;padding:0;margin-bottom:6px}
+.arow{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 6.5rem;gap:8px;margin-bottom:8px}
+.ahead{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) 6.5rem;gap:8px;font-size:13px;color:var(--mute);margin-bottom:4px}
+.mlink{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end;margin-top:10px}
+.mlink>div:first-child{grid-column:1/-1}
+#nprev{max-height:14em;overflow:auto}
+.chk{display:flex;gap:8px;align-items:flex-start;font-weight:400;padding:4px 0;margin:0;overflow-wrap:anywhere}
 .chk input{width:20px;height:20px;flex:none;margin-top:2px}
-[aria-invalid=true]{border:2px solid var(--route)!important}
-@media(max-width:600px){.ngrid{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:860px){.tool{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){.steps{grid-template-columns:minmax(0,1fr)}.bar{grid-template-columns:minmax(0,9em) minmax(0,1fr) 2.5em}
+[aria-invalid=true]{border:2px solid var(--err)!important;background:color-mix(in srgb,var(--err) 10%,var(--bg))}
+#nmsg[data-err]{color:var(--err)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:860px){.tool{grid-template-columns:minmax(0,1fr);grid-template-areas:"msg" "route" "note";grid-template-rows:auto}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.ngrid{grid-template-columns:minmax(0,1fr)}.arow{grid-template-columns:minmax(0,1fr) 6.5rem}header .lead{display:none}.stack tr{border-bottom:1px solid var(--line)}.arow select{grid-column:1/-1}.mlink{grid-template-columns:minmax(0,1fr)}.mlink button{justify-self:start}.ahead{display:none}
+.steps{grid-template-columns:minmax(0,1fr)}.bar{grid-template-columns:minmax(0,9em) minmax(0,1fr) 2.5em}
 table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;font-weight:600;color:var(--mute)}.stack td:empty{display:none}}
 </style>
 <script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
@@ -80,72 +113,85 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 <body>
 <header class="band">
 <svg viewBox="0 0 1200 260" preserveAspectRatio="none" aria-hidden="true">
-<g fill="none" stroke="#a8551b" stroke-width="1.2">
+<g fill="none" style="stroke:var(--brown)" stroke-width="1.2">
 <path d="M-20 200 C 200 150, 380 240, 620 180 S 1000 120, 1240 170"/>
 <path d="M-20 225 C 220 180, 400 262, 640 205 S 1010 150, 1240 196"/>
 <path d="M-20 175 C 180 120, 360 215, 600 155 S 990 95, 1240 145" opacity=".6"/>
 </g>
-<path d="M760 60 C 860 40, 940 110, 1040 70 S 1150 30, 1200 50" fill="none" stroke="#d6127e" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
-<circle cx="1040" cy="70" r="7" fill="#d6127e"/>
 </svg>
-<div class="wrap">
-<button type="button" id="uilang" class="langbtn">Ver em português</button>
+<div class="wrap hrow">
+<div class="htxt">
 <h1 data-i="h1">Ruta WhatsApp API: orientar bien, sin adivinar</h1>
 <p class="lead" data-i="lead1">Pega lo que escribió el cliente. La herramienta identifica el tema, te explica qué es en palabras simples y te da una respuesta lista, con el enlace oficial de Meta exacto, para copiar.</p>
-<p class="meta" data-i="meta1">Enlaces oficiales revisados el 24 nov 2026. Meta cambia su documentación: si un enlace falla, usa la portada de la documentación.</p>
+</div>
+<div class="hact">
+<nav aria-label="Secciones" id="nav"><a href="#notesec" data-i="nv1">Nota interna</a><a href="#codesec" data-i="nv2">Códigos de error</a><a href="#logsec" data-i="nv3">Registro</a></nav>
+<button type="button" id="theme">Modo oscuro</button>
+<button type="button" id="uilang">Ver em português</button>
+</div>
 </div>
 </header>
 
+<main>
 <section class="band">
-<div class="wrap tool">
-<div class="panel">
+<div class="wrap">
+<div class="calert" id="calert" role="status" hidden></div>
+<div class="tool">
+<div class="panel" id="pmsg">
 <label for="msg" data-i="lmsg">Mensaje del cliente</label>
 <textarea id="msg" data-p="msg" placeholder="Ej.: mi plantilla fue rechazada y no sé por qué / meu número foi bloqueado na API / error 131047"></textarea>
-<p class="hint" data-i="hint1">Funciona en español, portugués e inglés. Si el mensaje trae un número de error, también lo detecta.</p>
-<h3 data-i="hsug">Temas sugeridos</h3>
+<p class="hint" data-i="hint1">Funciona en español, portugués e inglés. Si el mensaje trae un número de error, arriba aparece qué significa.</p>
+<h2 class="sub" data-i="hsug">Temas sugeridos</h2>
 <div class="cats" id="sug"><span class="hint">Escribe o pega un mensaje para ver sugerencias.</span></div>
-<h3 data-i="hall">Todos los temas</h3>
-<div class="cats" id="all"></div>
+<details class="all" id="allbox" open><summary data-i="hall">Todos los temas</summary><div class="cats" id="all"></div></details>
 </div>
-<div class="panel" id="route" aria-live="polite">
+
+<div class="panel" id="route">
 <div class="empty" data-i="empty1">Elige un tema o pega un mensaje.<br>Aquí aparecerá la ruta: qué es, qué preguntar, la respuesta y los enlaces.</div>
 </div>
-</div>
-</section>
+<p class="sr" id="rstat" role="status"></p>
 
-<section class="band" id="notesec" style="padding-top:0">
-<div class="wrap panel">
-<h2 data-i="h2n">Nota interna para QA</h2>
-<p class="hint" data-i="hintn">Todos los campos son obligatorios. Los enlaces se marcan solos cuando copias la respuesta o un enlace. Al copiar la nota se registra el caso y todo queda limpio para el siguiente cliente. Los IDs no se guardan.</p>
+<section class="panel" id="notesec" aria-labelledby="h2n">
+<h2 id="h2n" data-i="h2n">Nota interna</h2>
+<p class="hint" style="margin:0 0 14px" data-i="hintn">Todo es obligatorio salvo los enlaces manuales. Los enlaces se marcan solos cuando copias la respuesta o un enlace. Al copiar la nota se registra el caso y todo queda limpio para el siguiente cliente. Los IDs no se guardan.</p>
+<fieldset>
+<legend data-i="lnas">Activos consultados</legend>
+<div class="ahead" aria-hidden="true"><span data-i="lat">Tipo de activo</span><span data-i="lai">ID del activo</span><span></span></div>
+<div id="nassets"></div>
+<button type="button" id="nadd" data-i="nadd">Agregar otro activo</button>
+</fieldset>
 <div class="ngrid">
-<div><label for="nat" data-i="lnat">Tipo de activo consultado</label><select id="nat"><option value="" data-i="o0">Elige…</option><option value="waba" data-i="a1">ID de la cuenta de WhatsApp Business (WABA)</option><option value="pn" data-i="a2">ID del número de teléfono</option><option value="tel" data-i="a3">Número de teléfono</option><option value="bm" data-i="a4">ID del portfolio comercial (Business Manager)</option><option value="app" data-i="a5">ID de la app</option><option value="oth" data-i="a6">Otro activo</option></select></div>
-<div><label for="nai" data-i="lnai">ID del activo</label><input type="text" id="nai" autocomplete="off"></div>
-<div><label for="nrol" data-i="lnrol">Rol del usuario</label><select id="nrol"><option value="" data-i="o0b">Elige…</option><option value="adm" data-i="r1">Administrador (control total)</option><option value="emp" data-i="r2">Empleado (acceso parcial)</option><option value="dev" data-i="r3">Desarrollador de la app</option><option value="bsp" data-i="r4">Proveedor o partner (BSP)</option><option value="oth" data-i="r5">Otro rol</option></select></div>
+<div><label for="nrol" data-i="lnrol">Rol del usuario</label><input type="text" id="nrol" list="roles" data-p="rol" autocomplete="off" placeholder="Ej.: administrador del portfolio"><datalist id="roles"></datalist></div>
 <div><label for="nui" data-i="lnui">ID del usuario</label><input type="text" id="nui" autocomplete="off"></div>
 </div>
 <h3 data-i="hnl">Enlaces utilizados</h3>
 <div id="nlinks"></div>
+<div class="mlink">
+<div><label for="nlu" data-i="lnlu">Otro enlace (opcional)</label><input type="url" id="nlu" autocomplete="off" placeholder="https://"></div>
+<div><label for="nll" data-i="lnll">Nombre (opcional)</label><input type="text" id="nll" autocomplete="off"></div>
+<button type="button" id="nla" data-i="nla">Agregar enlace</button>
+</div>
 <label for="nwhy" style="margin-top:14px" data-i="lnwhy">Por qué se usaron</label>
 <textarea id="nwhy" style="min-height:80px"></textarea>
 <h3 data-i="hnp">Vista previa de la nota</h3>
 <div class="reply" id="nprev"></div>
 <div class="row"><button type="button" class="main" id="ncp" data-i="ncp">Copiar nota y registrar</button><button type="button" id="nclr" data-i="nclr">Limpiar nota</button><span class="toast" id="nmsg" role="status"></span></div>
-</div>
 </section>
-<section class="band" style="background:var(--chip)">
-<div class="wrap">
-<h2 data-i="h2a">Fórmula para no recibir calificaciones negativas</h2>
-<p class="lead" style="margin-bottom:18px" data-i="leada">El cliente califica mal cuando siente que lo despacharon. Las respuestas de la herramienta ya siguen este orden. Respétalo si las editas.</p>
-<div class="steps">
-<div data-i="s1"><b>1. Nombra su problema</b>Repite en una frase lo que le pasa. Así sabe que lo entendiste.</div>
-<div data-i="s2"><b>2. Da la ruta, no el "no"</b>Abre con el camino exacto y el enlace. Lo de "este canal no gestiona…" va después, en una línea.</div>
-<div data-i="s3"><b>3. Dile qué tener a mano</b>ID de la cuenta, número, código de error, captura. Así su próximo intento es más corto.</div>
-<div data-i="s4"><b>4. Cierra con algo útil</b>Ofrece aclarar dudas sobre la guía o el producto que sí atiendes. Nunca cierres sin decir cuál es el siguiente paso.</div>
 </div>
 </div>
 </section>
 
-<section class="band">
+<section class="band" id="codesec" style="background:var(--chip)">
+<div class="wrap">
+<h2 data-i="h2c">Todos los códigos de error de Cloud API, en palabras simples</h2>
+<p class="lead" data-i="leadc">Lista completa de la tabla oficial de Meta (revisada el 24 nov 2026), traducida a lenguaje simple. La columna de la comunidad recoge soluciones que reportan desarrolladores y proveedores: no son oficiales. Al usarlas con un cliente, preséntalas como "otros usuarios reportan que…", nunca como solución garantizada.</p>
+<div class="row" style="margin:14px 0 12px"><label for="code" style="margin:0" data-i="lcode">Buscar código o palabra</label><input type="text" id="code" data-p="code" style="max-width:240px" placeholder="131047 o pago"><span class="hint" id="ccount" style="margin:0" aria-live="polite"></span></div>
+<table class="stack" id="codes"><thead><tr><th data-i="th1">Código</th><th data-i="th2">Qué significa</th><th data-i="th3">Solución oficial</th><th data-i="th4">Lo que reporta la comunidad</th><th data-i="th5">Guía</th></tr></thead><tbody></tbody></table>
+<p class="hint" data-i="hintc">Si un código no aparece aquí, Meta pudo haberlo agregado después de la revisión; búscalo en la tabla oficial. No incluye los códigos de la API de llamadas. Tabla oficial: <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/support/error-codes">Códigos de error de WhatsApp</a>.</p>
+</div>
+</section>
+
+<section class="band" id="logsec">
 <div class="wrap">
 <h2 data-i="h2b">Registro de casos fuera de alcance</h2>
 <p class="lead" data-i="leadb">Cada vez que copias una nota interna, el caso se guarda aquí, solo en este navegador. Copia el CSV, pégalo en Excel y llévalo a tu supervisor: con volumen y temas en la mano se puede pedir que corrijan el enrutamiento.</p>
@@ -153,22 +199,26 @@ table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-bl
 <div class="row">
 <button id="csv" data-i="csv">Copiar CSV</button>
 <button id="clr">Borrar registro</button>
-<span class="toast" id="logmsg"></span>
+<span class="toast" id="logmsg" role="status"></span>
 </div>
 </div>
 </section>
 
 <section class="band" style="background:var(--chip)">
-<div class="wrap">
-<h2 data-i="h2c">Todos los códigos de error de Cloud API, en palabras simples</h2>
-<p class="lead" data-i="leadc">Lista completa de la tabla oficial de Meta (revisada el 24 nov 2026), traducida a lenguaje simple. La columna de la comunidad recoge soluciones que reportan desarrolladores y proveedores: no son oficiales. Al usarlas con un cliente, preséntalas como "otros usuarios reportan que…", nunca como solución garantizada.</p>
-<div class="row" style="margin:14px 0 12px"><label for="code" style="margin:0" data-i="lcode">Buscar código o palabra</label><input type="text" id="code" data-p="code" style="max-width:240px" placeholder="131047 o pago"><span class="hint" id="ccount" style="margin:0"></span></div>
-<table class="stack" id="codes"><thead><tr><th data-i="th1">Código</th><th data-i="th2">Qué significa</th><th data-i="th3">Solución oficial</th><th data-i="th4">Lo que reporta la comunidad</th><th data-i="th5">Guía</th></tr></thead><tbody></tbody></table>
-<p class="hint" data-i="hintc">Si un código no aparece aquí, Meta pudo haberlo agregado después de la revisión; búscalo en la tabla oficial. No incluye los códigos de la API de llamadas. Tabla oficial: <a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/support/error-codes">Códigos de error de WhatsApp</a>.</p>
+<details class="wrap formula">
+<summary><h2 data-i="h2a">Fórmula para no recibir calificaciones negativas</h2></summary>
+<p class="lead" style="margin-top:12px" data-i="leada">El cliente califica mal cuando siente que lo despacharon. Las respuestas de la herramienta ya siguen este orden. Respétalo si las editas.</p>
+<div class="steps">
+<div data-i="s1"><b>1. Nombra su problema</b>Repite en una frase lo que le pasa. Así sabe que lo entendiste.</div>
+<div data-i="s2"><b>2. Da la ruta, no el "no"</b>Abre con el camino exacto y el enlace. Lo de "este canal no gestiona…" va después, en una línea.</div>
+<div data-i="s3"><b>3. Dile qué tener a mano</b>ID de la cuenta, número, código de error, captura. Así su próximo intento es más corto.</div>
+<div data-i="s4"><b>4. Cierra con algo útil</b>Ofrece aclarar dudas sobre la guía o el producto que sí atiendes. Nunca cierres sin decir cuál es el siguiente paso.</div>
 </div>
+</details>
 </section>
+</main>
 
-<footer class="band"><div class="wrap" data-i="foot">Esta herramienta solo orienta hacia recursos públicos de Meta. No diagnostica cuentas ni reemplaza el soporte oficial de la plataforma. Antes de usarla con clientes, valida con tu supervisor que compartir estos enlaces está dentro de la política de tu operación.</div></footer>
+<footer class="band"><div class="wrap"><p data-i="meta1">Enlaces oficiales revisados el 24 nov 2026. Meta cambia su documentación: si un enlace falla, usa la portada de la documentación.</p><p data-i="foot">Esta herramienta solo orienta hacia recursos públicos de Meta. No diagnostica cuentas ni reemplaza el soporte oficial de la plataforma. Antes de usarla con clientes, valida con tu supervisor que compartir estos enlaces está dentro de la política de tu operación.</p></div></footer>
 
 <script src="enlaces.js"></script>
 <script src="temas1.js"></script>

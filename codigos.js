@@ -80,6 +80,7 @@ const CODES=[
 ['134011','Otros','Faltan aceptar los términos de pagos de WhatsApp.','Aceptarlos con el enlace del error.','','err'],
 ['135000','Otros','Error de parámetro no especificado.','Revisar la sintaxis; si persiste, contactar a soporte.','','err'],
 ['131055','API de marketing','Se envió algo que no es una plantilla de marketing.','Usar una plantilla de marketing.','','err'],
+['131066','API de marketing','El mensaje de marketing no se entregó a este usuario por la calidad de la plantilla o por el precio máximo configurado.','Mejorar la calidad de la plantilla o subir el precio máximo. Aun así, la entrega no está garantizada.','','err'],
 ['134100','API de marketing','Esa API solo acepta plantillas de marketing (se envió una de utilidad o autenticación).','Usar solo plantillas de marketing.','','err'],
 ['134101','API de marketing','La plantilla todavía se está sincronizando (puede tardar hasta 10 minutos).','Esperar 10 minutos y reintentar.','','err'],
 ['134102','API de marketing','La plantilla no está disponible: falló la sincronización o la cuenta no es elegible.','Revisar elegibilidad; contactar a soporte si el estado es ONBOARDED.','','err'],
