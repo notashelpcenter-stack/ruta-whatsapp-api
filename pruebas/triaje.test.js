@@ -98,6 +98,17 @@ const CASOS=[
 ['no puedo enviar mensajes',['errores']],
 ['no me llegan los mensajes',['errores']],
 ['nao chegam as mensagens para os clientes',['errores']],
+// Problemas del troubleshooting de la comunidad (comunidad.js, 25 nov 2026)
+['quiero usar la app whatsapp business y la api con el mismo numero, la coexistencia',['numero']],
+['quero usar o app e a api ao mesmo tempo no mesmo numero',['numero']],
+['no puedo volver a registrar el numero en la cloud api',['numero']],
+['el webhook no recibe los mensajes de mis clientes',['tecnico']],
+['los mensajes llegan al webhook sin el numero de telefono del cliente',['tecnico']],
+['meta cambio mi plantilla de utilidad a marketing',['plantillas']],
+['my utility template was recategorized as marketing',['plantillas']],
+['perdi el acceso de administrador a mi cuenta de whatsapp, el admin se fue de la empresa',['propiedad']],
+['perdi o acesso de administrador do portfolio',['propiedad']],
+['el marketing no les llega a algunos clientes',['errores']],
 ['hola buenas tardes',[]],
 ['gracias por la ayuda',[]],
 ];

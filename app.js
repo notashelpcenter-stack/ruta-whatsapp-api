@@ -50,6 +50,16 @@ function newCase(){
   $('msg').value='';clearNote();autoCur=false;lang=ui;emptyRoute('');
   $('code').value='';autoCode=false;renderCodes();suggest();$('allbox').open=true;$('msg').focus();
 }
+// Troubleshooting de la comunidad: va después de la ruta oficial, con aviso fijo y plegado por problema,
+// para que no se confunda con la respuesta de Meta (pedido de TR, 25 nov 2026).
+function comBlock(id){
+  const cm=COM[id];if(!cm)return'';
+  return `<section class="com" aria-labelledby="comh"><h3 id="comh">${tr('comH')}</h3>
+<p class="comw"><b>${tr('comW1')}</b> ${tr('comW2')}</p>
+${cm.map(x=>`<details><summary>${esc(x.p[ui])}</summary><ol>${x.s[ui].map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
+<p class="hint">${tr('comSrc')} · ${tr('comRev')} ${new Date(x.rev+'T12:00').toLocaleDateString(tr('loc'))}</p>
+<ul class="links">${x.src.map(([t,u])=>`<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a><button type="button" data-cu="${esc(u)}" data-ct="${esc(t)}">${tr('cl')}</button></li>`).join('')}</ul></details>`).join('')}</section>`;
+}
 function show(id){
   const c=C.find(x=>x.id===id);if(!c)return;cur=id;
   const reply=fill(c.r[lang]);
@@ -60,7 +70,7 @@ function show(id){
 <div class="reply" id="reply">${esc(reply)}</div>
 <h3>${tr('links')}</h3>
 <ul class="links">${c.links.map(k=>`<li><a href="${esc(L[k][1])}" target="_blank" rel="noopener">${esc(lab(k))}</a><button type="button" data-k="${k}" data-u="${esc(L[k][1])}">${tr('cl')}</button></li>`).join('')}</ul>
-<div class="avoid"><b>${tr('avoid')}</b> ${esc(F(c,'avoid'))}</div>`;
+<div class="avoid"><b>${tr('avoid')}</b> ${esc(F(c,'avoid'))}</div>${comBlock(c.id)}`;
   // Se anuncia solo el título: con aria-live en todo el panel el lector leía la ruta entera en cada tecla.
   $('rstat').textContent=F(c,'t');
   document.querySelectorAll('.cats button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===id));
@@ -159,6 +169,8 @@ document.addEventListener('click',e=>{
   if(b.dataset.c){show(b.dataset.c);autoCur=false;if(innerWidth<860)$('route').scrollIntoView({behavior:'smooth',block:'start'});return}
   if(b.dataset.l){lang=b.dataset.l;show(cur);return}
   if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));usedL.add(b.dataset.k);renderNote();return}
+  // Enlace de comunidad: entra a la nota marcado como no oficial, porque QA revisa qué enlaces se dieron.
+  if(b.dataset.cu){copy(b.dataset.cu,$('t1'),tr('lcopied'));manL.set(b.dataset.cu,tr('comTag')+' '+b.dataset.ct);renderNote();return}
   if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));for(const m of C.find(x=>x.id===cur).r[lang].matchAll(/\{(\w+)\}/g))if(L[m[1]])usedL.add(m[1]);renderNote();return}
   if(b.id==='nadd'){$('nassets').insertAdjacentHTML('beforeend',assetRow());arows().pop().querySelector('select').focus();return}
   if(b.dataset.rm!==undefined){const r=b.closest('.arow');if(arows().length>1){r.remove();$('nadd').focus()}else renderAssets([['','']]);$('nprev').textContent=noteText();return}
