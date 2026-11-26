@@ -1,7 +1,6 @@
-const norm=s=>(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id);
-let cur=null,ui='es',lang='es';
+let cur=null,autoCur=false,ui='es',lang='es';
 try{ui=localStorage.getItem('waRuta.ui')||'es';lang=localStorage.getItem('waRuta.lang')||ui}catch(e){}
 const tr=k=>T[ui][k];
 const F=(c,f)=>ui==='pt'&&CPT[c.id]?CPT[c.id][f]:c[f];
@@ -19,13 +18,12 @@ function copy(text,el,ok){
 function catBtn(c,score){return `<button type="button" data-c="${c.id}" aria-pressed="${cur===c.id}">${esc(F(c,'t'))}${score?`<span class="s">${score}</span>`:''}</button>`}
 function renderAll(){$('all').innerHTML=C.map(c=>catBtn(c)).join('')}
 function suggest(){
-  const t=' '+norm($('msg').value)+' ';
-  if(!t.trim()){$('sug').innerHTML=`<span class="hint">${tr('sugE')}</span>`;return}
-  const codes=(t.match(/\b\d{3,7}\b/g)||[]).filter(n=>CODES.some(x=>x[0]===n));
-  const sc=C.map(c=>({c,s:c.k.reduce((a,k)=>a+(t.includes(norm(k))?(k.length>6?2:1):0),0)+(c.id==='errores'&&codes.length?3:0)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,4);
+  if(!$('msg').value.trim()){$('sug').innerHTML=`<span class="hint">${tr('sugE')}</span>`;return}
+  const {codes,sc}=rank($('msg').value);
   if(codes.length){$('code').value=codes[0];renderCodes()}
   $('sug').innerHTML=sc.length?sc.map(x=>catBtn(x.c,x.s>=4?'●●':'●')).join(''):`<span class="hint">${tr('sugN')}</span>`;
-  if(sc.length&&!cur)show(sc[0].c.id);
+  // Abre solo si hay un ganador claro: con empate abrir el primero mostraba una respuesta equivocada (25 nov 2026).
+  if(sc.length&&(!cur||autoCur)&&!(sc[1]&&sc[1].s===sc[0].s)){show(sc[0].c.id);autoCur=true}
 }
 function show(id){
   const c=C.find(x=>x.id===id);if(!c)return;cur=id;
@@ -94,7 +92,7 @@ function applyUI(){
 document.addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.id==='uilang'){ui=ui==='pt'?'es':'pt';lang=ui;try{localStorage.setItem('waRuta.ui',ui);localStorage.setItem('waRuta.lang',lang)}catch(x){}applyUI();return}
-  if(b.dataset.c){show(b.dataset.c);if(innerWidth<860)$('route').scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(b.dataset.c){show(b.dataset.c);autoCur=false;if(innerWidth<860)$('route').scrollIntoView({behavior:'smooth',block:'start'});return}
   if(b.dataset.l){lang=b.dataset.l;try{localStorage.setItem('waRuta.lang',lang)}catch(x){}show(cur);return}
   if(b.dataset.u){copy(b.dataset.u,$('t1'),tr('lcopied'));usedL.add(b.dataset.k);renderNote();return}
   if(b.id==='cp'){copy($('reply').textContent,$('t1'),tr('rcopied'));for(const m of C.find(x=>x.id===cur).r[lang].matchAll(/\{(\w+)\}/g))if(L[m[1]])usedL.add(m[1]);renderNote();return}

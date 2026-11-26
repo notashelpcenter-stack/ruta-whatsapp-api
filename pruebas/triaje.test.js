@@ -1,0 +1,113 @@
+// Banco de prueba del triaje (25 nov 2026). Uso: node pruebas/triaje.test.js
+// Cada caso: [mensaje, temas aceptables como 1.º sugerido]. [] = no debe sugerir nada.
+// shortcut: mensajes redactados por Claude, no reales; reemplazar por mensajes reales de analistas cuando estén.
+const fs=require('fs'),path=require('path');
+const R=path.join(__dirname,'..');
+const src=['enlaces','temas1','temas2','temas3','temas4','temas5','codigos','triaje'].map(f=>fs.readFileSync(path.join(R,f+'.js'),'utf8')).join('\n;\n');
+const {rank}=new Function(src+';return {rank}')();
+const CASOS=[
+['hola quiero usar la api de whatsapp para mandar mensajes desde mi sistema',['empezar']],
+['como conecto whatsapp con mi pagina web',['empezar']],
+['quero integrar o whatsapp no meu sistema',['empezar']],
+['how do I get access to the whatsapp cloud api',['empezar']],
+['me rechazaron la verificacion del negocio y no se que documentos mandar',['verificacion']],
+['como verifico mi empresa en meta',['verificacion']],
+['minha empresa nao foi verificada, recusaram os documentos',['verificacion']],
+['business verification failed',['verificacion']],
+['no me llega el codigo sms para registrar el numero',['numero']],
+['quiero pasar mi numero de whatsapp business a la api',['numero']],
+['o numero ja esta em uso no whatsapp, como cadastro na api',['numero']],
+["i can't add my phone number, it says it's already registered",['numero']],
+['me rechazaron el nombre visible',['nombre']],
+['quiero cambiar el nombre que aparece en whatsapp de mi empresa',['nombre']],
+['nome de exibição recusado',['nombre']],
+['display name not approved',['nombre']],
+['mi plantilla fue rechazada y no se por que',['plantillas']],
+['o modelo foi recusado',['plantillas']],
+['my template was paused',['plantillas']],
+['meta me pauso la plantilla de marketing',['plantillas']],
+['mi plantilla fue aprobada pero no llega por whatsapp',['plantillas','errores']],
+['solo me deja enviar a 250 personas por dia',['limites']],
+['como aumento el limite de mensajes',['limites']],
+['a qualidade do meu numero caiu para baixa',['limites']],
+['messaging limit tier stuck at 1k',['limites']],
+['me bloquearon la cuenta de whatsapp business api por spam',['restringida']],
+['minha conta foi banida, como faço o recurso',['restringida']],
+['our account was restricted for policy violation',['restringida']],
+['meu número foi bloqueado na API',['restringida']],
+['cuanto cuesta enviar mensajes por la api',['precios']],
+['me cobraron mensajes que no envie',['precios']],
+['quanto custa cada conversa',['precios']],
+['pricing per message in brazil',['precios']],
+['mi tarjeta fue rechazada en el pago de whatsapp',['facturacion']],
+['no puedo agregar un metodo de pago a la cuenta de whatsapp',['facturacion']],
+['error missing valid payment method',['facturacion']],
+['nao consigo adicionar o cartao',['facturacion']],
+['quiero quitar la linea de credito del proveedor anterior',['lineacredito']],
+['mi antiguo proveedor sigue cobrandome, como desconecto la lc',['lineacredito']],
+['remove credit line from previous partner',['lineacredito']],
+['mi numero esta en la cuenta de un proveedor y quiero llevarlo a mi propia cuenta',['propiedad']],
+['o provedor não quer liberar meu número',['propiedad']],
+['quiero recuperar mi numero que tiene otra empresa',['propiedad']],
+['mi cuenta lleva 5 dias en revision',['revision']],
+['a conta está em análise há uma semana',['revision']],
+['whatsapp account stuck in review',['revision']],
+['error 131047',['errores']],
+['los mensajes no llegan a los clientes',['errores']],
+['me sale el error 131026 al enviar',['errores']],
+['messages failed to deliver',['errores']],
+['el token de acceso expiro',['tecnico']],
+['mi webhook no recibe los mensajes',['tecnico']],
+['como creo un token permanente con usuario del sistema',['tecnico']],
+['permission denied for whatsapp_business_messaging',['tecnico']],
+['quiero la verificacion azul de mi cuenta de whatsapp business',['insignia']],
+['como obtengo el check azul en whatsapp',['insignia']],
+['quero o selo azul no whatsapp',['insignia']],
+['how do I get the meta verified badge',['insignia']],
+['uso twilio y no me envia mensajes',['proveedor','errores']],
+['contrate con zenvia y tengo problemas',['proveedor']],
+['meu bsp não responde',['proveedor']],
+['me hackearon el whatsapp de mi celular',['noapi']],
+['perdi mis chats de whatsapp business',['noapi']],
+['não consigo entrar no meu whatsapp',['noapi']],
+['buenas, necesito ayuda para que meta me apruebe la plantilla de bienvenida',['plantillas']],
+['nao recebo o sms para confirmar o numero na api',['numero']],
+['por que me cobran tanto por cada mensaje de marketing',['precios']],
+['la cuenta de whatsapp quedo inhabilitada sin aviso',['restringida']],
+['quiero que mi empresa salga como oficial con el visto azul',['insignia']],
+['meu cliente nao recebe as mensagens, aparece erro 131049',['errores']],
+['el proveedor que tenia antes todavia tiene la linea de credito conectada',['lineacredito']],
+['necesito subir de nivel para mandar mas mensajes por dia',['limites']],
+['hace dos semanas que mi cuenta esta pendiente de aprobacion',['revision']],
+['olvide la contraseña de mi whatsapp en el telefono',['noapi']],
+['no puedo pagar las conversaciones, me dice que falta forma de pago',['facturacion']],
+['como hago para que mi sistema reciba los mensajes de los clientes (webhook)',['tecnico']],
+['trabajo con gupshup y no me responden',['proveedor']],
+['quiero mudar o nome da minha conta no whatsapp',['nombre']],
+['enviaram documentos para verificar a empresa mas ainda nao aprovaram',['verificacion','revision']],
+['quero sair do meu provedor e levar meu numero',['propiedad']],
+['me piden el pin de seis digitos para migrar el numero',['numero','propiedad']],
+['meta suspendio el numero por violar politicas',['restringida']],
+['the template is stuck in pending',['plantillas','revision']],
+['what does error 131026 mean',['errores']],
+['mi app de whatsapp business se cerro y perdi los mensajes',['noapi']],
+['quiero empezar con la api pero no se programar',['empezar']],
+['token invalido al enviar mensajes',['tecnico']],
+['cual es el precio por conversacion en mexico',['precios']],
+['necesito factura de los pagos a meta',['facturacion']],
+['hola buenas tardes',[]],
+['gracias por la ayuda',[]],
+];
+let ok1=0,ok3=0;const fallos=[];
+for(const [m,exp] of CASOS){
+  const sc=rank(m).sc,ids=sc.map(x=>x.c.id);
+  // un empate arriba no cuenta como acierto: la app no abre ningún tema solo si hay empate
+  const top=exp.length?exp.includes(ids[0])&&!(sc[1]&&sc[1].s===sc[0].s):ids.length===0;
+  const in3=exp.length?ids.slice(0,3).some(i=>exp.includes(i)):ids.length===0;
+  ok1+=top;ok3+=in3;
+  if(!top)fallos.push(`  ${in3?'(en top3)':'(fuera)  '} "${m}" → esperado ${exp.join('|')||'nada'}, obtuvo ${rank(m).sc.map(x=>x.c.id+':'+x.s).join(' ')||'nada'}`);
+}
+const n=CASOS.length,p=x=>Math.round(x/n*100)+'%';
+console.log(`Acierto 1.º sugerido: ${ok1}/${n} (${p(ok1)})   En los 3 primeros: ${ok3}/${n} (${p(ok3)})`);
+if(fallos.length)console.log('Fallos:\n'+fallos.join('\n'));
+process.exitCode=ok1===n?0:1;
